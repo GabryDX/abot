@@ -50,13 +50,14 @@ class DocumentFileStorage(FileStorage):
 		self.conn.execute("DELETE FROM last_message")
 		self.conn.execute("INSERT INTO last_message VALUES (?, ?)", (chat_id, message_id,))
 
-	def get_doc(self, key:str) -> Dict[str, Any]:
+	def get_doc(self, key: str) -> Optional[Dict[str, Any]]:
 		with self.conn:
-			return json.loads(
-				self.conn.execute(
-					"SELECT doc FROM documents WHERE key = ?", (key,)
-				).fetchone()
-			)
+			row = self.conn.execute(
+				"SELECT doc FROM documents WHERE key = ?", (key,)
+			).fetchone()
+			if row is None or row[0] is None:
+				return None
+			return json.loads(row[0])
 
 	def put_doc(self, key:str, doc:Dict[str, Any]) -> None:
 		with self.conn:

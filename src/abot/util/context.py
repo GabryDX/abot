@@ -12,8 +12,7 @@ class Context:
 	def __repr__(self) -> str:
 		return json.dumps(self._store, default=str)
 
-	def __hash__(self) -> int:
-		return hash(self._store)
+	__hash__ = None
 
 	def __bool__(self) -> bool:
 		return bool(self._store)

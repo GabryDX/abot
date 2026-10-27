@@ -34,7 +34,7 @@ Each plugin must be a repository itself which can be installed in the `plugins` 
 **One "catch":** your plugin should import its files as `import plugins.<yourplugin>.<...>`. This means that if you need to have custom classes, you cannot have dashes (`-`) in your plugin name. Thinking about solutions... On the flip side, you can always access utils
 
 # How to deploy
-You just need Python 3.7+ and a PC always on to run this. More dependancies will depend on modules.
+You just need Python 3.10+ and a PC always on to run this. More dependencies will depend on modules.
 It is strongly recommended to install this on a UNIX system. If you plan to install on Windows, [I recommend installing abot inside a WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
 * Clone this repo : `git clone https://git.alemi.dev/abot/core.git abot`
 * Make a `venv` with `python3 -m venv <anyfolder>`

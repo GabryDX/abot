@@ -1,5 +1,7 @@
 import re
 import os
+import sys
+import shutil
 import logging
 import asyncio
 
@@ -8,7 +10,7 @@ from typing import Optional, List
 LOGGER = logging.getLogger("GIT")
 
 REPO_HEAD_MATCHER = re.compile(r"refs\/heads\/(?P<branch>[^\s]+)(?:\s+)HEAD")
-GITMODULE_URL_MATCHER = re.compile(r"url = (git@github.com:|https://github.com/)(?P<module>.*).git")
+GITMODULE_URL_MATCHER = re.compile(r"url = (?:git@[^:]+:|https?://[^/]+/)(?P<module>[^\s]+?)(?:\.git)?$")
 
 PLUGIN_HTTPS = re.compile(r"http(?:s|):\/\/(?:.*)\/(?P<author>[^ ]+)\/(?P<plugin>[^ \.]+)(?:\.git|)")
 PLUGIN_SSH = re.compile(r"git@(?:.*)\.(?:.*):(?P<author>[^ ]+)\/(?P<plugin>[^ \.]+)(?:\.git|)")
@@ -132,9 +134,7 @@ async def remove_plugin(plugin:str, dependancies:bool=False) -> bool:
 	LOGGER.debug(stdout.decode())
 	if not stdout.startswith(b"Cleared"):
 		return False
-	proc = await asyncio.create_subprocess_exec(
-		"rm", "-rf", f".git/modules/plugins/{plugin}",
-	)
+	shutil.rmtree(f".git/modules/plugins/{plugin}", ignore_errors=True)
 	proc = await asyncio.create_subprocess_exec(
 		"git", "rm", "-f", f"plugins/{plugin}",
 		stdout=asyncio.subprocess.PIPE,
@@ -151,7 +151,7 @@ async def install_dependancies(plugin:str) -> int:
 	if not os.path.isfile(f"plugins/{plugin}/requirements.txt"):
 		return 0
 	proc = await asyncio.create_subprocess_exec(
-		"pip", "install", "-r", f"plugins/{plugin}/requirements.txt", "--upgrade",
+		sys.executable, "-m", "pip", "install", "-r", f"plugins/{plugin}/requirements.txt", "--upgrade",
 		stdout=asyncio.subprocess.PIPE,
 		stderr=asyncio.subprocess.STDOUT
 	)
@@ -164,7 +164,7 @@ async def install_dependancies(plugin:str) -> int:
 
 async def update_abot_dependancies() -> int:
 	proc = await asyncio.create_subprocess_exec(
-		"pip", "install", ".", "--upgrade",
+		sys.executable, "-m", "pip", "install", ".", "--upgrade",
 		stdout=asyncio.subprocess.PIPE,
 		stderr=asyncio.subprocess.STDOUT
 	)
@@ -182,7 +182,7 @@ async def update_plugins_dependancies() -> int:
 	for match in matches:
 		if os.path.isfile(f"{match}/requirements.txt"):
 			proc = await asyncio.create_subprocess_exec(
-				"pip", "install", "-r", f"{match}/requirements.txt", "--upgrade",
+				sys.executable, "-m", "pip", "install", "-r", f"{match}/requirements.txt", "--upgrade",
 				stdout=asyncio.subprocess.PIPE,
 				stderr=asyncio.subprocess.STDOUT
 			)
@@ -197,7 +197,7 @@ async def remove_dependancies(plugin:str) -> int:
 		return 0
 
 	proc = await asyncio.create_subprocess_exec(
-		"pip", "uninstall", "-y", "-r", f"plugins/{plugin}/requirements.txt",
+		sys.executable, "-m", "pip", "uninstall", "-y", "-r", f"plugins/{plugin}/requirements.txt",
 		stdout=asyncio.subprocess.PIPE,
 		stderr=asyncio.subprocess.STDOUT
 	)
@@ -216,4 +216,10 @@ def get_plugin_list() -> List[str]:
 			modules = f.read()
 		return GITMODULE_URL_MATCHER.findall(modules)
 	return []
+
+# Backwards compatibility aliases for typo corrections
+install_dependencies = install_dependancies
+update_abot_dependencies = update_abot_dependancies
+update_plugins_dependencies = update_plugins_dependancies
+remove_dependencies = remove_dependancies
 

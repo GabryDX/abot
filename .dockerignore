@@ -1,0 +1,24 @@
+.git
+.venv
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+
+# Sensitive Telegram data and credentials
+*.session
+*.session-journal
+*.ini
+data/
+log/
+downloads/
+
+# Test & coverage caches
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/

@@ -6,7 +6,7 @@ import platform
 import resource
 import os
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 
 import psutil
 
@@ -140,7 +140,7 @@ async def info_cmd(client:aBot, message:Message):
 	
 	if not client.me.is_bot:
 		sess = list(filter(lambda x : x.current , (await client.invoke(GetAuthorizations())).authorizations))[0]
-		session_age = datetime.now() - datetime.utcfromtimestamp(sess.date_created)
+		session_age = datetime.now(timezone.utc) - datetime.fromtimestamp(sess.date_created, timezone.utc)
 	
 	await edit_or_reply(message,
 		f'<code>→ </code> <a href="https://github.com/adev/abot">ᚨᛚᛖᛗᛁᛒᛟᛏ</a> <code>v{client.app_version}</code>\n' +
@@ -212,7 +212,7 @@ async def update_cmd(client:aBot, message:Message):
 	await edit_or_reply(message, result + "\n<code> → </code> Restarting process", separator=" ")
 	if message.chat and isinstance(client.storage, DocumentFileStorage):
 		client.storage._set_last_message(message.chat.id, message.id)
-	asyncio.get_event_loop().create_task(client.restart())
+	asyncio.create_task(client.restart())
 
 PLUGIN_HTTPS = re.compile(r"http(?:s|):\/\/(?:.*)\/(?P<author>[^ ]+)\/(?P<plugin>[^ \.]+)(?:\.git|)")
 PLUGIN_SSH = re.compile(r"git@(?:.*)\.(?:.*):(?P<author>[^ ]+)\/(?P<plugin>[^ \.]+)(?:\.git|)")
@@ -301,9 +301,9 @@ async def plugin_add_cmd(client:aBot, message:Message):
 
 	await edit_or_reply(message, result + "\n<code> → </code> Restarting process", separator=" ")
 	if message.chat and isinstance(client.storage, DocumentFileStorage):
-		client.storage._set_last_message(message.id, message.chat.id)
+		client.storage._set_last_message(message.chat.id, message.id)
 
-	asyncio.get_event_loop().create_task(client.restart())
+	asyncio.create_task(client.restart())
 
 # TODO maybe I can merge these 2 commands like trust/revoke ?
 
@@ -351,7 +351,7 @@ async def plugin_remove_cmd(client:aBot, message:Message):
 
 	if message.chat and isinstance(client.storage, DocumentFileStorage):
 		client.storage._set_last_message(message.chat.id, message.id)
-	asyncio.get_event_loop().create_task(client.restart())
+	asyncio.create_task(client.restart())
 
 @HELP.add()
 @aBot.on_message(sudo & filterCommand(["plugins", "plugin", "plugin_list"]))

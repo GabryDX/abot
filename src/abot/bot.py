@@ -69,17 +69,21 @@ class aBot(Client, OnReady):
 			storage = DocumentFileStorage(name, Path(kwargs['workdir']) if 'workdir' in kwargs else Client.WORKDIR)
 
 		if 'app_version' not in kwargs: # generate app version automatically
-			# Get project version from setup.cfg
-			setup_cfg = ConfigParser()
-			setup_cfg.read("setup.cfg")
-			v_base = setup_cfg.get('metadata', 'version', fallback="0")
+			try:
+				from importlib.metadata import version, PackageNotFoundError
+				v_base = version("abot")
+			except (PackageNotFoundError, ImportError):
+				v_base = "0.8.0"
 			# Get current commit hash and append to app version
-			res = subprocess.run(
-				["git", "rev-parse", "--short", "HEAD"],
-				stderr=subprocess.STDOUT, stdout=subprocess.PIPE
-			)
-			v_git = res.stdout.decode('utf-8').strip()
-			if v_git.startswith("fatal"):
+			try:
+				res = subprocess.run(
+					["git", "rev-parse", "--short", "HEAD"],
+					stderr=subprocess.STDOUT, stdout=subprocess.PIPE
+				)
+				v_git = res.stdout.decode('utf-8').strip()
+				if v_git.startswith("fatal"):
+					v_git = '???'
+			except Exception:
 				v_git = '???'
 			kwargs['app_version'] = f"{v_base}-{v_git}"
 
@@ -159,7 +163,7 @@ class aBot(Client, OnReady):
 
 	async def restart(self):
 		await self.stop()
-		proc = ['python', '-m', 'abot'] + sys.argv[1:]
+		proc = [sys.executable, '-m', 'abot'] + sys.argv[1:]
 		self.logger.warning("Executing '%s'", str.join(' ', proc))
 		os.execv(sys.executable, proc) # This will replace current process
 	

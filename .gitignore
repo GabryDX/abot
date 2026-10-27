@@ -1,15 +1,33 @@
+# Telegram sessions and runtime databases
 *.session
 *.session-journal
 *.ini
-
-tags
-cscope.*
-
-downloads/
 data/
+log/
+downloads/
 
+# Python & build artifacts
 *.egg-info/
 __pycache__/
+*.py[cod]
 build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Editor & tags
+tags
+cscope.*
+.vscode/
+.idea/
+
+# Testing & linting caches
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
 plugins/__pycache__/
