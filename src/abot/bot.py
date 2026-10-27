@@ -52,12 +52,13 @@ class aBot(Client, OnReady):
 		self.config.read(config_file or f"{name}.ini")
 
 		# Merge it with kwargs, with those taking precedence
-		if self.config.has_section("pyrogram"):
-			for k, v in self.config["pyrogram"].items():
+		tg_section = "wzgram" if self.config.has_section("wzgram") else "pyrogram"
+		if self.config.has_section(tg_section):
+			for k, v in self.config[tg_section].items():
 				if k not in kwargs:
 					# jank special cases for bools and ints, damn ini!
 					if k == "ipv6":
-						kwargs[k] = self.config.getboolean("pyrogram", "ipv6")
+						kwargs[k] = self.config.getboolean(tg_section, "ipv6")
 					elif k in ("workers", "sleep_threshold"):
 						kwargs[k] = int(v)
 					else:
@@ -120,10 +121,11 @@ class aBot(Client, OnReady):
 		self.auth = Authenticator(name)
 		self.sudoers = sudoers or [ int(uid.strip()) for uid in self.config.get("perms", "sudo", fallback="").split() ]
 		self.public = self.config.getboolean("perms", "public", fallback=False) # util/permission
-		# Silence some pyrogram logging prints
+		# Silence some telegram logging prints
 		if not pyrogram_logs:
-			logging.getLogger('pyrogram.session').setLevel(logging.WARNING)  # So it's less spammy
-			logging.getLogger('pyrogram.connection').setLevel(logging.WARNING)  # So it's less spammy
+			for mod in ("pyrogram", "wzgram"):
+				logging.getLogger(f"{mod}.session").setLevel(logging.WARNING)
+				logging.getLogger(f"{mod}.connection").setLevel(logging.WARNING)
 		# Install pre-loaded plugins
 
 	async def _edit_last(self):

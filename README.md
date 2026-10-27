@@ -12,7 +12,7 @@ This repo contains the root for abot:
 * a command parsing system (UNIX-like) to implement sophisticated commands
 * an help command which automatically extracts docstrings
 * a 2 role permission system (user/root)
-* a wrapper around pyrogram SQLite db, for easy storage of persistent data
+* a wrapper around SQLite db, for easy storage of persistent data
 * some common commands (/update, /ping, /info)
 * events for bot startup/shutdown
 * some utility functions to handle most common tasks
@@ -48,9 +48,9 @@ Only required fields are `api_id` and `api_hash`. There is an example config fil
 Multiple bot instances can be run with just 1 installation: just give unique names to your configurations and run the correct one: `python -m abot <config-name>`.
 
 ```ini
-[pyrogram]
-api_id = 1234                     # your API ID
-api_hash = longstring             # your API hash
+[wzgram]                              # or [pyrogram]
+api_id = 1234                         # your API ID
+api_hash = longstring                 # your API hash
 [perms]
 sudo = 0                          # users allowed to operate this account as sudo. Put ids, separate with whitespace
 public = False                    # commands for allowed users will be available to everyone
