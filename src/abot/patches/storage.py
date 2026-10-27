@@ -1,4 +1,5 @@
 import json
+import inspect
 
 from pathlib import Path
 from typing import Dict, Any, Tuple, Optional
@@ -29,13 +30,23 @@ class DocumentFileStorage(FileStorage):
 	def __init__(self, name: str, workdir: Path):
 		super().__init__(name, workdir / 'data')
 
-	def update(self):
-		super().update()
+	async def update(self):
+		if not self.conn:
+			await self.open()
+			return
+		res = super().update()
+		if inspect.isawaitable(res):
+			await res
 		with self.conn:
 			self.conn.executescript(DOCUMENT_SCHEMA)
 
-	def create(self):
-		super().create()
+	async def create(self):
+		if not self.conn:
+			await self.open()
+			return
+		res = super().create()
+		if inspect.isawaitable(res):
+			await res
 		with self.conn:
 			self.conn.executescript(DOCUMENT_SCHEMA)
 
