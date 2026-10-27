@@ -7,7 +7,8 @@ from setproctitle import setproctitle
 from .bot import aBot
 from .util.text import setup_logging
 
-if __name__ == "__main__":
+
+def main(argv=None):
 	"""
 	Default logging will only show the message on stdout (but up to INFO) 
 	and show time + type + module + message in file (data/<name>.log)
@@ -15,7 +16,7 @@ if __name__ == "__main__":
 	setproctitle("aBot")
 
 	parser = argparse.ArgumentParser(
-		prog='python -m abot',
+		prog='abot',
 		description='aBot | Telegram (user)bot framework',
 	)
 
@@ -32,12 +33,10 @@ if __name__ == "__main__":
 	parser.add_argument('--no-color', dest='color', action='store_const', default=True, const=False, help='disable colors for logger text')
 	parser.add_argument('--debug', dest='debug_level', action='store_const', default=logging.INFO, const=logging.DEBUG, help='Set logging to debug level')
 
-	args = parser.parse_args()
+	args = parser.parse_args(argv)
 
-	if not os.path.isdir('data'):
-		os.mkdir('data')
-	if not os.path.isdir('log'):
-		os.mkdir('log')
+	os.makedirs('data', exist_ok=True)
+	os.makedirs('log', exist_ok=True)
 
 	setup_logging(args.name, level=args.debug_level, color=args.color)
 
@@ -61,3 +60,6 @@ if __name__ == "__main__":
 
 	app.run()
 
+
+if __name__ == "__main__":
+	main()

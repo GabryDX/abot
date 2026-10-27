@@ -129,23 +129,30 @@ async def info_cmd(client:aBot, message:Message):
 	res_self = resource.getrusage(resource.RUSAGE_SELF)
 	res_child = resource.getrusage(resource.RUSAGE_CHILDREN)
 	cpu_time = res_self.ru_utime + res_child.ru_utime + res_self.ru_stime + res_child.ru_stime
-	cpu_usage = cpu_time / execution_time
+	cpu_usage = (cpu_time / execution_time) if execution_time > 0 else 0.0
 	cpu_load = psutil.cpu_percent() # total
-	cpu_count = psutil.cpu_count()
-	cpu_freq = max(psutil.cpu_freq().max, psutil.cpu_freq().current) # max might be 0 and current might be lower than max
+	cpu_count = psutil.cpu_count() or 1
+	freq = psutil.cpu_freq()
+	cpu_freq = max(freq.max, freq.current) if freq else 0.0
 	plugin_count = 0
 	if os.path.isfile(".gitmodules"):
 		with open(".gitmodules") as f: # not too nice but will do for now
 			plugin_count = f.read().count("[submodule")
 	
+	session_age = None
 	if not client.me.is_bot:
-		sess = list(filter(lambda x : x.current , (await client.invoke(GetAuthorizations())).authorizations))[0]
-		session_age = datetime.now(timezone.utc) - datetime.fromtimestamp(sess.date_created, timezone.utc)
+		try:
+			authorizations = (await client.invoke(GetAuthorizations())).authorizations
+			current_sess = [x for x in authorizations if x.current]
+			if current_sess:
+				session_age = datetime.now(timezone.utc) - datetime.fromtimestamp(current_sess[0].date_created, timezone.utc)
+		except Exception:
+			pass
 	
 	await edit_or_reply(message,
 		f'<code>→ </code> <a href="https://github.com/adev/abot">ᚨᛚᛖᛗᛁᛒᛟᛏ</a> <code>v{client.app_version}</code>\n' +
 		f"<code> → </code> <b>uptime</b> <code>{str(datetime.now() - client.start_time)}</code>\n" +
-		(f"<code>  → </code> <b>session age</b> <code>{str(session_age)}</code>\n" if not client.me.is_bot else "") +
+		(f"<code>  → </code> <b>session age</b> <code>{str(session_age)}</code>\n" if session_age is not None else "") +
 		f"<code> → </code> <b>latency</b> <code>{latency:.1f} ms</code>\n" +
 		f"<code> → </code> <b>plugins</b> <code>{plugin_count}</code>\n" +
 		f"<code>→ </code> <b>system</b> <code>{platform.system()}-{platform.machine()} {platform.release()}</code>\n" +
@@ -366,7 +373,7 @@ async def plugin_list_cmd(client:aBot, message:Message):
 	if os.path.isfile(".gitmodules"):
 		with open(".gitmodules") as f:
 			modules = f.read()
-		matches = re.findall(r"url = (?:git@|https:\/\/(?:www\.|))github\.com(?::|\/)(?P<p>[^ \.]+)(?:\.git|)", modules)
+		matches = re.findall(r"url = (?:git@[^:]+:|https?://[^/]+/)(?P<p>[^\s]+?)(?:\.git)?$", modules, re.MULTILINE)
 		text = "<code>→ </code> Installed plugins:\n"
 		for match in matches:
 			if match not in hidden:

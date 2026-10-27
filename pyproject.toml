@@ -39,6 +39,9 @@ dev = [
 Homepage = "https://git.alemi.dev/abot/core.git"
 Repository = "https://github.com/GabryDX/abot.git"
 
+[project.scripts]
+abot = "abot.__main__:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 

@@ -40,6 +40,7 @@ class JsonDriver(AuthStorageDriver):
 			with open(self.fname) as f:
 				self.data = json.load(f)
 		except FileNotFoundError:
+			os.makedirs(os.path.dirname(self.fname) or '.', exist_ok=True)
 			with open(self.fname, "w") as f:
 				json.dump({}, f)
 			os.chmod(self.fname, 0o600)
