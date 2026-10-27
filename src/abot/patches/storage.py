@@ -28,7 +28,13 @@ class DocumentFileStorage(FileStorage):
 	the data folder, to not litter top level with runtime data.
 	"""
 	def __init__(self, name: str, workdir: Path):
-		super().__init__(name, workdir / 'data')
+		data_dir = Path(workdir) / 'data'
+		data_dir.mkdir(parents=True, exist_ok=True)
+		super().__init__(name, data_dir)
+
+	@property
+	def raw_conn(self):
+		return getattr(self.conn, "_conn", self.conn)
 
 	async def update(self):
 		if not self.conn:
@@ -37,8 +43,9 @@ class DocumentFileStorage(FileStorage):
 		res = super().update()
 		if inspect.isawaitable(res):
 			await res
-		with self.conn:
-			self.conn.executescript(DOCUMENT_SCHEMA)
+		if self.raw_conn:
+			with self.raw_conn:
+				self.raw_conn.executescript(DOCUMENT_SCHEMA)
 
 	async def create(self):
 		if not self.conn:
@@ -47,23 +54,32 @@ class DocumentFileStorage(FileStorage):
 		res = super().create()
 		if inspect.isawaitable(res):
 			await res
-		with self.conn:
-			self.conn.executescript(DOCUMENT_SCHEMA)
+		if self.raw_conn:
+			with self.raw_conn:
+				self.raw_conn.executescript(DOCUMENT_SCHEMA)
 
 	def _get_last_message(self) -> Optional[Tuple[int, int]]:
-		res = self.conn.execute("SELECT * FROM last_message").fetchone()
+		if not self.raw_conn:
+			return None
+		res = self.raw_conn.execute("SELECT * FROM last_message").fetchone()
 		if res:
-			self.conn.execute("DELETE FROM last_message")
+			with self.raw_conn:
+				self.raw_conn.execute("DELETE FROM last_message")
 			return res
 		return None
 
 	def _set_last_message(self, chat_id:int, message_id:int):
-		self.conn.execute("DELETE FROM last_message")
-		self.conn.execute("INSERT INTO last_message VALUES (?, ?)", (chat_id, message_id,))
+		if not self.raw_conn:
+			return
+		with self.raw_conn:
+			self.raw_conn.execute("DELETE FROM last_message")
+			self.raw_conn.execute("INSERT INTO last_message VALUES (?, ?)", (chat_id, message_id,))
 
 	def get_doc(self, key: str) -> Optional[Dict[str, Any]]:
-		with self.conn:
-			row = self.conn.execute(
+		if not self.raw_conn:
+			return None
+		with self.raw_conn:
+			row = self.raw_conn.execute(
 				"SELECT doc FROM documents WHERE key = ?", (key,)
 			).fetchone()
 			if row is None or row[0] is None:
@@ -71,7 +87,8 @@ class DocumentFileStorage(FileStorage):
 			return json.loads(row[0])
 
 	def put_doc(self, key:str, doc:Dict[str, Any]) -> None:
-		with self.conn:
-			self.conn.execute("DELETE FROM documents WHERE key = ?", (key, ))
-			self.conn.execute("INSERT INTO documents VALUES (?, ?)", (key, json.dumps(doc), ))
-
+		if not self.raw_conn:
+			return
+		with self.raw_conn:
+			self.raw_conn.execute("DELETE FROM documents WHERE key = ?", (key, ))
+			self.raw_conn.execute("INSERT INTO documents VALUES (?, ?)", (key, json.dumps(doc), ))
