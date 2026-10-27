@@ -68,3 +68,6 @@ ignore = [
     "E402",  # module level import not at top of file
     "E722",  # do not use bare except
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]

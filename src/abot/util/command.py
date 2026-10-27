@@ -6,9 +6,12 @@ be put in a CommandMatch object for easier access.
 import re
 import json
 
-from typing import Dict, List, Union, Any, Optional
+from typing import Dict, List, Union, Any, Optional, TYPE_CHECKING
 from pyrogram.types import Message
 from pyrogram.filters import create
+
+if TYPE_CHECKING:
+	from ..bot import aBot
 
 class ConsumableBuffer:
 	"""Wrapper for a string which needs tokens replaced"""

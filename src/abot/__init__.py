@@ -9,3 +9,5 @@ except ImportError:
 	pass
 
 from .bot import aBot
+
+__all__ = ["aBot"]

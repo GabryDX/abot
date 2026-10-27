@@ -47,7 +47,6 @@ class OnReady:
 		async with self._lock:
 			for group in self.dispatcher.groups.values():
 				for handler in group:
-					args = None
 					if isinstance(handler, ReadyHandler):
 						try:
 							if inspect.iscoroutinefunction(handler.callback):

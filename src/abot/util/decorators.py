@@ -37,7 +37,7 @@ def report_error(lgr:logging.Logger, mark_failed:bool=False) -> Callable:
 					await edit_or_reply(message, f"{pref}\n<code>[!] → </code> " + str(e), separator=" ")
 				except ChatWriteForbidden: # Can't write messages here, prevent the double stacktrace
 					lgr.error("[%s] Cannot send messages in this chat", author)
-			except ChatSendMediaForbidden as e:
+			except ChatSendMediaForbidden:
 				try: # It may come from another chat, still try to report it
 					await edit_or_reply(message, f"{pref}\n<code>[!] → </code> cannot send media in this chat", separator=" ")
 					lgr.warning("[%s] Cannot send media in this chat", author)

@@ -1,10 +1,13 @@
 import os
 import json
 
-from typing import Dict, List, Set, Type
+from typing import Dict, List, Set, Type, TYPE_CHECKING
 
 from pyrogram.filters import Filter, create
 from pyrogram.types import Update
+
+if TYPE_CHECKING:
+	from ..bot import aBot
 
 import logging
 logger = logging.getLogger(__name__)
