@@ -4,7 +4,6 @@ import shutil
 from typing import Dict
 from logging import StreamHandler, getLogger, Formatter, LogRecord, DEBUG, INFO, WARNING, ERROR, CRITICAL
 from logging.handlers import RotatingFileHandler
-from traceback import format_exception
 
 from termcolor import colored
 

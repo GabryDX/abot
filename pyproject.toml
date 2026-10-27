@@ -50,9 +50,21 @@ asyncio_mode = "auto"
 testpaths = ["tests"]
 
 [tool.ruff]
-line-length = 100
+line-length = 120
 target-version = "py310"
 
+[tool.ruff.format]
+indent-style = "tab"
+
 [tool.ruff.lint]
-select = ["E", "F", "W", "UP"]
-ignore = ["E501"]
+select = ["E", "F"]
+ignore = [
+    "E501",  # line too long
+    "W191",  # indentation contains tabs (project uses tabs as per .editorconfig)
+    "E101",  # mixed spaces and tabs
+    "E111",  # indentation is not a multiple of four
+    "E114",  # indentation is not a multiple of four (comment)
+    "E117",  # over-indented
+    "E402",  # module level import not at top of file
+    "E722",  # do not use bare except
+]

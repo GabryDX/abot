@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from typing import Dict, Any, Tuple, Optional
 
-from pyrogram.storage import Storage, FileStorage
+from pyrogram.storage import FileStorage
 
 DOCUMENT_SCHEMA = """
 CREATE TABLE IF NOT EXISTS documents

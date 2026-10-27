@@ -26,8 +26,10 @@ def parse_timedelta(text):
 	hour = _search_value(text, "h")
 	minute = _search_value(text, "m")
 	second = _search_value(text, "s")
-	return timedelta(days=(day+(year*365)),
-					 hours=hour,
-					 minutes=minute,
-					 seconds=second)
+	return timedelta(
+		days=(day + (year * 365)),
+		hours=hour,
+		minutes=minute,
+		seconds=second,
+	)
 

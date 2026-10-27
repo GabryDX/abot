@@ -1,7 +1,6 @@
 import os
 import argparse
 import logging
-from logging.handlers import RotatingFileHandler
 
 from setproctitle import setproctitle
 

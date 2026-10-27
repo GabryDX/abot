@@ -1,4 +1,3 @@
-import typing
 from datetime import datetime
 
 from pyrogram.types import List

@@ -1,6 +1,5 @@
 import tempfile
 import os
-from pathlib import Path
 from abot.util.permission import Authenticator, JsonDriver
 
 

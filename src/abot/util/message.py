@@ -7,7 +7,7 @@ from time import time
 from pyrogram.types import Message
 from pyrogram import Client
 from pyrogram.errors import ChatWriteForbidden, FloodWait
-from pyrogram.enums import ChatAction, ParseMode
+from pyrogram.enums import ChatAction
 
 from .text import batchify
 from .getters import get_text

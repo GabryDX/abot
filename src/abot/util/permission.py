@@ -3,7 +3,6 @@ import json
 
 from typing import Dict, List, Set, Type
 
-from pyrogram import filters
 from pyrogram.filters import Filter, create
 from pyrogram.types import Update
 
