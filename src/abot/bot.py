@@ -131,7 +131,7 @@ class aBot(Client, OnReady):
 	async def _edit_last(self):
 		if not isinstance(self.storage, DocumentFileStorage):
 			return
-		last = self.storage._get_last_message()
+		last = await self.storage._get_last_message()
 		if not last:
 			return
 		try:

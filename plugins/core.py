@@ -211,7 +211,7 @@ async def update_cmd(client:aBot, message:Message):
 
 	await edit_or_reply(message, result + "\n<code> → </code> Restarting process", separator=" ")
 	if message.chat and isinstance(client.storage, DocumentFileStorage):
-		client.storage._set_last_message(message.chat.id, message.id)
+		await client.storage._set_last_message(message.chat.id, message.id)
 	asyncio.create_task(client.restart())
 
 PLUGIN_HTTPS = re.compile(r"http(?:s|):\/\/(?:.*)\/(?P<author>[^ ]+)\/(?P<plugin>[^ \.]+)(?:\.git|)")
@@ -301,7 +301,7 @@ async def plugin_add_cmd(client:aBot, message:Message):
 
 	await edit_or_reply(message, result + "\n<code> → </code> Restarting process", separator=" ")
 	if message.chat and isinstance(client.storage, DocumentFileStorage):
-		client.storage._set_last_message(message.chat.id, message.id)
+		await client.storage._set_last_message(message.chat.id, message.id)
 
 	asyncio.create_task(client.restart())
 
@@ -350,7 +350,7 @@ async def plugin_remove_cmd(client:aBot, message:Message):
 	await edit_or_reply(message, "[<code>OK</code>]\n<code> → </code> Restarting process", separator=" ")
 
 	if message.chat and isinstance(client.storage, DocumentFileStorage):
-		client.storage._set_last_message(message.chat.id, message.id)
+		await client.storage._set_last_message(message.chat.id, message.id)
 	asyncio.create_task(client.restart())
 
 @HELP.add()
