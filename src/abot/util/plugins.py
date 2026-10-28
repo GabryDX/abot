@@ -147,6 +147,8 @@ async def update_plugins() -> int:
 	return stdout.count(b"checked out")
 
 async def remove_plugin(plugin:str, dependancies:bool=False) -> bool:
+	if ".." in plugin:
+		raise GitException(f"Invalid plugin name '{plugin}'")
 	plugin = normalize_plugin_name(plugin)
 	if not re.match(r'^[a-zA-Z0-9_.-]+$', plugin) or ".." in plugin:
 		raise GitException(f"Invalid plugin name '{plugin}'")
@@ -172,6 +174,8 @@ async def remove_plugin(plugin:str, dependancies:bool=False) -> bool:
 	return True
 
 async def install_dependancies(plugin:str) -> int:
+	if ".." in plugin:
+		raise PipException(f"Invalid plugin name '{plugin}'")
 	plugin = normalize_plugin_name(plugin)
 	if not re.match(r'^[a-zA-Z0-9_.-]+$', plugin) or ".." in plugin:
 		raise PipException(f"Invalid plugin name '{plugin}'")
@@ -219,6 +223,8 @@ async def update_plugins_dependancies() -> int:
 	return count
 
 async def remove_dependancies(plugin:str) -> int:
+	if ".." in plugin:
+		raise PipException(f"Invalid plugin name '{plugin}'")
 	plugin = normalize_plugin_name(plugin)
 	if not re.match(r'^[a-zA-Z0-9_.-]+$', plugin) or ".." in plugin:
 		raise PipException(f"Invalid plugin name '{plugin}'")
