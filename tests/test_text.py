@@ -4,9 +4,11 @@ from abot.util.time import parse_timedelta
 
 
 def test_batchify():
-    text = "abcdefghij"
-    assert batchify(text, 4) == ["abcd", "efgh", "ij"]
-    assert batchify(text, 20) == ["abcdefghij"]
+	text = "abcdefghij"
+	assert batchify(text, 4) == ["abcd", "efgh", "ij"]
+	assert batchify(text, 20) == ["abcdefghij"]
+	assert batchify("1234", 2) == ["12", "34"]
+	assert batchify("", 5) == [""]
 
 
 def test_cleanhtml():

@@ -7,13 +7,13 @@ from logging.handlers import RotatingFileHandler
 
 from termcolor import colored
 
+_HTML_TAGS_RE = re.compile(r'<.*?>')
+_ANSI_ESCAPE_RE = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+
 def batchify(str_in, size):
-	if len(str_in) < size:
-		return [str_in]
-	out = []
-	for i in range((len(str_in)//size) + 1):
-		out.append(str_in[i*size : (i+1)*size])
-	return out
+	if not str_in:
+		return [""]
+	return [str_in[i : i + size] for i in range(0, len(str_in), size)]
 
 class ColorFormatter(Formatter):
 	def __init__(self, fmt:str, datefmt:str = None):
@@ -53,13 +53,10 @@ def setup_logging(name:str, level=INFO, color:bool=True) -> None:
 	logger.addHandler(ch)
 
 def cleanhtml(raw_html):
-	cleanr = re.compile('<.*?>')
-	cleantext = re.sub(cleanr, '', raw_html)
-	return cleantext
+	return _HTML_TAGS_RE.sub('', raw_html)
 
 def cleartermcolor(raw_in):
-	ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-	return ansi_escape.sub('', raw_in)
+	return _ANSI_ESCAPE_RE.sub('', raw_in)
 
 def order_suffix(num, measure='B'):
 	for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:

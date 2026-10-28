@@ -108,6 +108,6 @@ class PermsFilter(Filter):
 			return client.auth.check(update.from_user.id, self.group)
 		elif hasattr(update, "sender_chat") and update.sender_chat:
 			return client.auth.check(update.sender_chat.id, self.group)
-		raise NotImplementedError
+		return False
 
 is_allowed = PermsFilter() # backwards compatibility

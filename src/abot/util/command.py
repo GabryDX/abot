@@ -161,8 +161,8 @@ def filterCommand(commands: Union[str,List[str]], prefixes: Optional[Union[str,L
 					for opt in flt.options:
 						if token in flt.options[opt]:
 							found = True
-							val = match_list.pop(0) # pop the value
-							raw_buf.consume([token, val])
+							val = match_list.pop(0) if match_list else None # pop the value
+							raw_buf.consume([token, val] if val is not None else token)
 							message.command.options[opt] = val
 							break
 					if found:

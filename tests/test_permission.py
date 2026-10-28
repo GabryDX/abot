@@ -36,3 +36,15 @@ def test_authenticator_permissions():
         assert auth.pop(11111) is True
         assert not auth.check(11111)
         assert auth.pop(11111) is False
+
+
+@pytest.mark.asyncio
+async def test_perms_filter_headless_update():
+	from types import SimpleNamespace
+	from abot.util.permission import PermsFilter
+
+	flt = PermsFilter()
+	client = SimpleNamespace(sudoers=[], public=False)
+	update = SimpleNamespace(from_user=None, sender_chat=None)
+	res = await flt(client, update)
+	assert res is False

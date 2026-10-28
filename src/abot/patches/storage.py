@@ -84,6 +84,5 @@ class DocumentFileStorage(FileStorage):
 	async def put_doc(self, key: str, doc: Dict[str, Any]) -> None:
 		if not self.conn:
 			return
-		await self.conn.execute("DELETE FROM documents WHERE key = ?", (key,))
-		await self.conn.execute("INSERT INTO documents VALUES (?, ?)", (key, json.dumps(doc)))
+		await self.conn.execute("INSERT OR REPLACE INTO documents (key, doc) VALUES (?, ?)", (key, json.dumps(doc)))
 		await self.conn.commit()
