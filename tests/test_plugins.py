@@ -52,3 +52,15 @@ async def test_remove_plugin_traversal():
 
 	with pytest.raises(GitException, match="Invalid plugin name"):
 		await remove_plugin("../outside")
+
+
+@pytest.mark.asyncio
+async def test_install_plugin_flag_injection():
+	import pytest
+	from abot.util.plugins import GitException, install_plugin
+
+	with pytest.raises(GitException, match="leading '-' not allowed"):
+		await install_plugin("--upload-pack=evil")
+
+	with pytest.raises(GitException, match="leading '-' not allowed"):
+		await install_plugin("https://github.com/adev/tricks.git", branch="--evil-flag")

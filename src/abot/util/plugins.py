@@ -60,8 +60,10 @@ def normalize_plugin_name_author(url):
 	return url, "unknown"
 
 async def get_repo_head(repo:str) -> Optional[str]:
+	if repo.startswith("-"):
+		return None
 	proc = await asyncio.create_subprocess_exec(
-		"git", "ls-remote", "--symref", repo, "HEAD",
+		"git", "ls-remote", "--symref", "--", repo, "HEAD",
 		stdout=asyncio.subprocess.PIPE,
 		stderr=asyncio.subprocess.STDOUT,
 		env={ "GIT_TERMINAL_PROMPT" : "0" },
@@ -90,11 +92,15 @@ async def update_abot() -> bool:
 		return True
 
 async def install_plugin(plugin:str, path:str=None, branch:str=None):
+	if plugin.startswith("-"):
+		raise GitException("Invalid plugin URL or name: leading '-' not allowed")
+	if branch and branch.startswith("-"):
+		raise GitException("Invalid branch name: leading '-' not allowed")
 	url = normalize_plugin_url(plugin)
 	args = ["git", "submodule", "add" ]
 	if branch:
-		args.append("-b")
-		args.append(branch)
+		args.extend(["-b", branch])
+	args.append("--")
 	args.append(url)
 	if path:
 		target_path = Path(path).resolve()
