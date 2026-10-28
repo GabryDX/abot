@@ -28,13 +28,16 @@ class RepositoryNotExistingException(GitException):
 	pass
 
 def normalize_plugin_name(input_str:str) -> str:
-	# TODO regexify maybe?
-	if input_str.startswith('http'):
-		input_str = input_str.split('://', 1)[1].split('/', 1)[1]
-	if '@' in input_str:
-		input_str = input_str.replace('.git', '').rsplit('@')[1]
-	if '/' in input_str:
-		input_str = input_str.rsplit('/', 1)[1]
+	if input_str.endswith(".git"):
+		input_str = input_str[:-4]
+	if input_str.startswith("http"):
+		input_str = input_str.split("://", 1)[1].split("/", 1)[1]
+	if "@" in input_str:
+		input_str = input_str.rsplit("@", 1)[1]
+	if ":" in input_str:
+		input_str = input_str.rsplit(":", 1)[1]
+	if "/" in input_str:
+		input_str = input_str.rsplit("/", 1)[1]
 	return input_str
 
 def normalize_plugin_url(input_str:str) -> str:

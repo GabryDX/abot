@@ -23,4 +23,4 @@ def test_convert_to_dict_objects_and_masking():
 	assert d["_"] == "DummyObject"
 	assert d["name"] == "Alice"
 	assert d["count"] == 5
-	assert d["phone_number"] == "************"  # masked
+	assert d["phone_number"] == "*" * len("+1234567890")  # masked

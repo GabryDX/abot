@@ -4,21 +4,23 @@ from pyrogram.types import Message, InlineQuery, Chat, User
 from pyrogram.enums import ParseMode
 
 def get_text(msg:Union[Message, InlineQuery], raw:bool = False, parse_mode:ParseMode=ParseMode.HTML) -> str:
-	if isinstance(msg, Message) and msg.text:
+	text = getattr(msg, "text", None)
+	if text:
 		if not raw:
-			if parse_mode == ParseMode.HTML and hasattr(msg.text, "html"):
-				return msg.text.html
-			if parse_mode == ParseMode.MARKDOWN and hasattr(msg.text, "markdown"):
-				return msg.text.markdown
-		return msg.text
-	if isinstance(msg, Message) and msg.caption:
+			if parse_mode == ParseMode.HTML and hasattr(text, "html"):
+				return text.html
+			if parse_mode == ParseMode.MARKDOWN and hasattr(text, "markdown"):
+				return text.markdown
+		return text
+	caption = getattr(msg, "caption", None)
+	if caption:
 		if not raw:
-			if parse_mode == ParseMode.HTML and hasattr(msg.caption, "html"):
-				return msg.caption.html
-			if parse_mode == ParseMode.MARKDOWN and hasattr(msg.caption, "markdown"):
-				return msg.caption.markdown
-		return msg.caption
-	if isinstance(msg, InlineQuery) and msg.query:
+			if parse_mode == ParseMode.HTML and hasattr(caption, "html"):
+				return caption.html
+			if parse_mode == ParseMode.MARKDOWN and hasattr(caption, "markdown"):
+				return caption.markdown
+		return caption
+	if getattr(msg, "query", None):
 		return msg.query
 	return ""
 
