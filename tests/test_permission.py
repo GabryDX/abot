@@ -1,5 +1,6 @@
 import tempfile
 import os
+import pytest
 from abot.util.permission import Authenticator, JsonDriver
 
 
