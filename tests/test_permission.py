@@ -1,7 +1,8 @@
 import tempfile
 import os
+from types import SimpleNamespace
 import pytest
-from abot.util.permission import Authenticator, JsonDriver
+from abot.util.permission import Authenticator, JsonDriver, PermsFilter
 
 
 def test_authenticator_permissions():
@@ -41,9 +42,6 @@ def test_authenticator_permissions():
 
 @pytest.mark.asyncio
 async def test_perms_filter_headless_update():
-	from types import SimpleNamespace
-	from abot.util.permission import PermsFilter
-
 	flt = PermsFilter()
 	client = SimpleNamespace(sudoers=[], public=False)
 	update = SimpleNamespace(from_user=None, sender_chat=None)
