@@ -13,6 +13,8 @@ def main(argv=None):
 	Default logging will only show the message on stdout (but up to INFO) 
 	and show time + type + module + message in file (data/<name>.log)
 	"""
+	# Enforce restrictive umask (077): owner read/write only for runtime databases, logs, sessions
+	os.umask(0o077)
 	setproctitle("aBot")
 
 	parser = argparse.ArgumentParser(

@@ -1,3 +1,4 @@
+import os
 import json
 import inspect
 
@@ -30,7 +31,19 @@ class DocumentFileStorage(FileStorage):
 	def __init__(self, name: str, workdir: Path):
 		data_dir = Path(workdir) / 'data'
 		data_dir.mkdir(parents=True, exist_ok=True)
+		try:
+			data_dir.chmod(0o700)
+		except OSError:
+			pass
 		super().__init__(name, data_dir)
+
+	def _lock_permissions(self):
+		session_path = getattr(self, "path", None) or getattr(self, "database", None)
+		if session_path and Path(session_path).is_file():
+			try:
+				Path(session_path).chmod(0o600)
+			except OSError:
+				pass
 
 	async def update(self):
 		if not self.conn:
@@ -42,6 +55,7 @@ class DocumentFileStorage(FileStorage):
 		if self.conn:
 			await self.conn.executescript(DOCUMENT_SCHEMA)
 			await self.conn.commit()
+		self._lock_permissions()
 
 	async def create(self):
 		if not self.conn:
@@ -53,6 +67,7 @@ class DocumentFileStorage(FileStorage):
 		if self.conn:
 			await self.conn.executescript(DOCUMENT_SCHEMA)
 			await self.conn.commit()
+		self._lock_permissions()
 
 	async def _get_last_message(self) -> Optional[Tuple[int, int]]:
 		if not self.conn:

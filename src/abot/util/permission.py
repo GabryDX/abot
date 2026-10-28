@@ -48,6 +48,10 @@ class JsonDriver(AuthStorageDriver):
 	def serialize(self):
 		with open(self.fname, "w") as f:
 			json.dump(self.data, f)
+		try:
+			os.chmod(self.fname, 0o600)
+		except OSError:
+			pass
 
 class Authenticator:
 	name : str # The session name
