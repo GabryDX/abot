@@ -13,6 +13,15 @@ from .getters import get_user, get_username, get_text
 if TYPE_CHECKING:
 	from ..bot import aBot
 
+def _sanitize_msg_for_log(msg: Message, max_len: int = 80) -> str:
+	raw = get_text(msg)
+	if not raw:
+		return ""
+	cleaned = " ".join(raw.split())
+	if len(cleaned) > max_len:
+		return cleaned[:max_len] + "..."
+	return cleaned
+
 def report_error(lgr:logging.Logger, mark_failed:bool=False) -> Callable:
 	"""Will report errors back to user
 
@@ -44,12 +53,13 @@ def report_error(lgr:logging.Logger, mark_failed:bool=False) -> Callable:
 				except Exception:
 					lgr.exception("[%s] Cannot send media in this chat and failed to notify", author)
 			except Exception as e:
+				cmd_snippet = _sanitize_msg_for_log(message)
 				try:
 					msg = await client.get_messages(message.chat.id, message.id) # fetch message again because text may have changed
 					await edit_or_reply(msg, f"{pref}\n<code>[!] {type(e).__name__} → </code> {str(e)}", separator=" ")
-					lgr.exception("[%s] exception in '%s' started by '%s'", author, func.__name__, get_text(message))
+					lgr.exception("[%s] exception in '%s' started by '%s'", author, func.__name__, cmd_snippet)
 				except Exception:
-					lgr.exception("[%s] exception in '%s' started by '%s' (and failed notifying)", author, func.__name__, get_text(message))
+					lgr.exception("[%s] exception in '%s' started by '%s' (and failed notifying)", author, func.__name__, cmd_snippet)
 		return wrapper
 	return deco
 
