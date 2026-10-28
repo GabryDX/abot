@@ -65,5 +65,8 @@ root = plugins                    # change plugins folder, leave this as is
 
 Plugins may add categories or fields to the config file, refer to their instructions for further configuration.
 
+# Security
+For a comprehensive security assessment, threat model, and remediation report, see [SECURITY_AUDIT.md](SECURITY_AUDIT.md).
+
 # Contacts
 on [my site](https://alemi.dev) or [mail me](mailto:me@alemi.dev)
