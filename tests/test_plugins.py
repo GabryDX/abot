@@ -16,6 +16,7 @@ def test_normalize_plugin_url():
 	assert normalize_plugin_url("https://github.com/adev/tricks.git") == "https://github.com/adev/tricks.git"
 	assert normalize_plugin_url("git@github.com:adev/tricks.git") == "git@github.com:adev/tricks.git"
 	assert normalize_plugin_url("adev/tricks") == "https://github.com/adev/tricks.git"
+	assert normalize_plugin_url("https://user:pass@github.com/adev/tricks.git") == "https://github.com/adev/tricks.git"
 
 
 def test_normalize_plugin_name_author():

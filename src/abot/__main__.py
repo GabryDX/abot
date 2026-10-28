@@ -27,7 +27,7 @@ def main(argv=None):
 
 	parser.add_argument('--api-id', dest='api_id', type=int, help="API ID to use for authentication, overrides config")
 	parser.add_argument('--api-hash', dest='api_hash', help="API HASH to use for authentication, overrides config")
-	parser.add_argument('--session', dest='session_string', metavar='STRING', help='use given pre-authenticated session string for login')
+	parser.add_argument('--session', dest='session_string', metavar='STRING', help='use given pre-authenticated session string for login (WARNING: visible in process list; prefer SESSION_STRING env var)')
 	parser.add_argument('--install', dest='install', metavar='PLUGIN', nargs='+', help='install requested plugins at first startup')
 	parser.add_argument('--prefix', dest='prefixes', help="prefixes for commands (each character is a distinct one)")
 	parser.add_argument('--sudo', dest='sudo', metavar="UID", type=int, nargs='+', help="user ids of those allowed to operate as owners, overrides config")
@@ -49,6 +49,9 @@ def main(argv=None):
 		kwargs["api_hash"] = args.api_hash
 	if args.session_string is not None:
 		kwargs["session_string"] = args.session_string
+		logging.getLogger("abot").warning("Session string provided via CLI argument may be visible in process listings (use SESSION_STRING env var instead)")
+	elif "SESSION_STRING" in os.environ:
+		kwargs["session_string"] = os.environ["SESSION_STRING"]
 
 	app = aBot(
 		args.name,

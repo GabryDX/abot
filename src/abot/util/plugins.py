@@ -42,8 +42,10 @@ def normalize_plugin_name(input_str:str) -> str:
 	return input_str
 
 def normalize_plugin_url(input_str:str) -> str:
-	# TODO regexify maybe?
-	if not input_str.startswith("https") and not input_str.startswith("git@"):
+	# Strip embedded plaintext HTTP basic credentials from URL to prevent .gitmodules leakage
+	if input_str.startswith("http://") or input_str.startswith("https://"):
+		input_str = re.sub(r"^(https?://)[^/@]+@", r"\1", input_str)
+	if not input_str.startswith("https") and not input_str.startswith("http") and not input_str.startswith("git@"):
 		input_str = f"https://github.com/{input_str}.git"
 	return input_str
 
