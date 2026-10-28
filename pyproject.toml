@@ -37,7 +37,7 @@ dev = [
 
 [project.urls]
 Homepage = "https://git.alemi.dev/abot/core.git"
-Repository = "https://github.com/GabryDX/abot.git"
+Repository = "https://github.com/alemidev/abot.git"
 
 [project.scripts]
 abot = "abot.__main__:main"

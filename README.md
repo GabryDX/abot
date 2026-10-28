@@ -36,7 +36,7 @@ Each plugin must be a repository itself which can be installed in the `plugins` 
 # How to deploy
 You just need Python 3.11+ and a PC always on to run this. More dependencies will depend on modules.
 It is strongly recommended to install this on a UNIX system. If you plan to install on Windows, [I recommend installing abot inside a WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
-* Clone this repo : `git clone https://github.com/GabryDX/abot.git abot`
+* Clone this repo : `git clone https://github.com/alemidev/abot.git abot`
 * Make a `venv` with `python3 -m venv <anyfolder>`
 * Activate `venv` with `source <venvfolder>/bin/activate`
 * Install the `abot` package in your new venv: `pip install ./abot`

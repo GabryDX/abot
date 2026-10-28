@@ -1,7 +1,7 @@
 # aBot Security Audit & Hardening Report
 
 **Audit Date:** October 28, 2026  
-**Target:** `aBot` Telegram Bot / Userbot Framework ([GitHub Repository](https://github.com/GabryDX/abot))  
+**Target:** `aBot` Telegram Bot / Userbot Framework ([GitHub Repository](https://github.com/alemidev/abot))  
 **Target Branch:** `dev`  
 **Engine:** `wzgram>=1.0.0` (MTProto with Rust-backed `warpcrypto`)  
 **Python Support:** `>=3.11` (Python 3.11, 3.12, 3.13)  
