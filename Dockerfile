@@ -14,7 +14,7 @@ RUN useradd -m -u 1000 abot && \
     mkdir -p /app/data /app/log /app/plugins && \
     chown -R abot:abot /app
 
-COPY . /app
+COPY --chown=abot:abot . /app
 
 RUN pip install --no-cache-dir .
 
@@ -25,4 +25,4 @@ ENV NAME="abot" \
     SUDO="0" \
     INSTALL=""
 
-CMD ["sh", "-c", "python -m abot \"$NAME\" ${SESSION_STRING:+--session=\"$SESSION_STRING\"} --sudo=\"$SUDO\" --prefix=\"$PREFIX\" --install=\"$INSTALL\""]
+CMD ["sh", "-c", "abot \"$NAME\" ${SESSION_STRING:+--session=\"$SESSION_STRING\"} --sudo=\"$SUDO\" --prefix=\"$PREFIX\" --install=\"$INSTALL\""]

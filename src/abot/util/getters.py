@@ -13,9 +13,9 @@ def get_text(msg:Union[Message, InlineQuery], raw:bool = False, parse_mode:Parse
 		return msg.text
 	if isinstance(msg, Message) and msg.caption:
 		if not raw:
-			if parse_mode == ParseMode.HTML and msg.caption.html:
+			if parse_mode == ParseMode.HTML and hasattr(msg.caption, "html"):
 				return msg.caption.html
-			if parse_mode == ParseMode.MARKDOWN and msg.caption.markdown:
+			if parse_mode == ParseMode.MARKDOWN and hasattr(msg.caption, "markdown"):
 				return msg.caption.markdown
 		return msg.caption
 	if isinstance(msg, InlineQuery) and msg.query:

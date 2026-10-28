@@ -50,8 +50,10 @@ def normalize_plugin_name_author(url):
 	match = PLUGIN_SSH.match(url)
 	if match:
 		return match["plugin"], match["author"]
-	author, plugin = url.split("/", 1)
-	return plugin, author
+	if "/" in url:
+		author, plugin = url.split("/", 1)
+		return plugin, author
+	return url, "unknown"
 
 async def get_repo_head(repo:str) -> Optional[str]:
 	proc = await asyncio.create_subprocess_exec(

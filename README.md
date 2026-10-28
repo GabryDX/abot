@@ -36,16 +36,16 @@ Each plugin must be a repository itself which can be installed in the `plugins` 
 # How to deploy
 You just need Python 3.11+ and a PC always on to run this. More dependencies will depend on modules.
 It is strongly recommended to install this on a UNIX system. If you plan to install on Windows, [I recommend installing abot inside a WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
-* Clone this repo : `git clone https://git.alemi.dev/abot/core.git abot`
+* Clone this repo : `git clone https://github.com/GabryDX/abot.git abot`
 * Make a `venv` with `python3 -m venv <anyfolder>`
 * Activate `venv` with `source <venvfolder>/bin/activate`
 * Install the `abot` package in your new venv: `pip install ./abot`
 * Copy `default.ini` to another file (`my-bot.ini`, for example, use any name) and fill in your API hash and ID (visit https://my.telegram.org/)
-* Run bot : `python -m abot my-bot`, pass your config name as argument. First time it will request your phone number and a verification code.
+* Run bot : `abot my-bot` (or `python -m abot my-bot`), pass your config name as argument. First time it will request your phone number and a verification code.
 
 # config file
 Only required fields are `api_id` and `api_hash`. There is an example config file (`default.ini`) where you just need to fill `api_id` and `api_hash`.
-Multiple bot instances can be run with just 1 installation: just give unique names to your configurations and run the correct one: `python -m abot <config-name>`.
+Multiple bot instances can be run with just 1 installation: just give unique names to your configurations and run the correct one: `abot <config-name>`.
 
 ```ini
 [wzgram]                              # or [pyrogram]

@@ -16,7 +16,7 @@ def _catch_errors(fun):
 	@functools.wraps(fun)
 	async def wrapper(self, *args, **kwargs):
 		try:
-			await fun(self, args, kwargs)
+			await fun(self, *args, **kwargs)
 		except FloodWait as e:
 			logging.error("FloodWait too long (%d s), aborting", e.value)
 		except ChatWriteForbidden:
@@ -69,7 +69,7 @@ class ProgressChatAction:
 		if self._running:
 			return False
 		self._running = True
-		asyncio.get_event_loop().create_task(self._tick_task())
+		asyncio.create_task(self._tick_task())
 		return True
 
 	def stop(self):
@@ -131,11 +131,11 @@ async def send_media(client:Client, chat_id:int, fname:str, **kwargs):
 		await client.send_video(chat_id, fname, progress=prog.tick, **kwargs)
 	elif fname.endswith((".webp", ".tgs")):
 		prog = ProgressChatAction(client, chat_id, action=ChatAction.CHOOSE_STICKER)
-		kwargs.pop("caption") # would raise an exception, remove it so it's safe to use from send_media
+		kwargs.pop("caption", None) # would raise an exception, remove it so it's safe to use from send_media
 		await client.send_sticker(chat_id, fname, progress=prog.tick, **kwargs)
 	elif fname.endswith((".mp3", ".ogg", ".wav")):
 		prog = ProgressChatAction(client, chat_id, action=ChatAction.UPLOAD_AUDIO)
-		kwargs.pop("caption") # would raise an exception, remove it so it's safe to use from send_media
+		kwargs.pop("caption", None) # would raise an exception, remove it so it's safe to use from send_media
 		await client.send_voice(chat_id, fname, progress=prog.tick, **kwargs)
 	else:
 		prog = ProgressChatAction(client, chat_id, action=ChatAction.UPLOAD_DOCUMENT)
