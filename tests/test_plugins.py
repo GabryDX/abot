@@ -34,3 +34,21 @@ def test_normalize_plugin_name_author():
 	plugin, author = normalize_plugin_name_author("solo_plugin")
 	assert plugin == "solo_plugin"
 	assert author == "unknown"
+
+
+@pytest.mark.asyncio
+async def test_install_plugin_traversal():
+	import pytest
+	from abot.util.plugins import GitException, install_plugin
+
+	with pytest.raises(GitException, match="outside of plugins directory"):
+		await install_plugin("https://github.com/adev/tricks.git", path="../outside")
+
+
+@pytest.mark.asyncio
+async def test_remove_plugin_traversal():
+	import pytest
+	from abot.util.plugins import GitException, remove_plugin
+
+	with pytest.raises(GitException, match="Invalid plugin name"):
+		await remove_plugin("../outside")

@@ -5,6 +5,7 @@ import shutil
 import logging
 import asyncio
 
+from pathlib import Path
 from typing import Optional, List
 
 LOGGER = logging.getLogger("GIT")
@@ -96,9 +97,18 @@ async def install_plugin(plugin:str, path:str=None, branch:str=None):
 		args.append(branch)
 	args.append(url)
 	if path:
+		target_path = Path(path).resolve()
+		plugins_root = Path("plugins").resolve()
+		try:
+			target_path.relative_to(plugins_root)
+		except ValueError:
+			raise GitException(f"Destination path '{path}' is outside of plugins directory")
 		args.append(path)
 	else:
-		args.append(f"plugins/{normalize_plugin_name(plugin)}")
+		name = normalize_plugin_name(plugin)
+		if not re.match(r'^[a-zA-Z0-9_.-]+$', name) or ".." in name:
+			raise GitException(f"Invalid plugin name '{name}'")
+		args.append(f"plugins/{name}")
 	proc = await asyncio.create_subprocess_exec(
 		*args,
 		stdout=asyncio.subprocess.PIPE,
@@ -130,6 +140,8 @@ async def update_plugins() -> int:
 
 async def remove_plugin(plugin:str, dependancies:bool=False) -> bool:
 	plugin = normalize_plugin_name(plugin)
+	if not re.match(r'^[a-zA-Z0-9_.-]+$', plugin) or ".." in plugin:
+		raise GitException(f"Invalid plugin name '{plugin}'")
 	proc = await asyncio.create_subprocess_exec(
 		"git", "submodule", "deinit", "-f", f"plugins/{plugin}",
 		stdout=asyncio.subprocess.PIPE,
@@ -153,6 +165,8 @@ async def remove_plugin(plugin:str, dependancies:bool=False) -> bool:
 
 async def install_dependancies(plugin:str) -> int:
 	plugin = normalize_plugin_name(plugin)
+	if not re.match(r'^[a-zA-Z0-9_.-]+$', plugin) or ".." in plugin:
+		raise PipException(f"Invalid plugin name '{plugin}'")
 	if not os.path.isfile(f"plugins/{plugin}/requirements.txt"):
 		return 0
 	proc = await asyncio.create_subprocess_exec(
@@ -198,6 +212,8 @@ async def update_plugins_dependancies() -> int:
 
 async def remove_dependancies(plugin:str) -> int:
 	plugin = normalize_plugin_name(plugin)
+	if not re.match(r'^[a-zA-Z0-9_.-]+$', plugin) or ".." in plugin:
+		raise PipException(f"Invalid plugin name '{plugin}'")
 	if not os.path.isfile(f"plugins/{plugin}/requirements.txt"):
 		return 0
 

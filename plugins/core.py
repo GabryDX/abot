@@ -276,6 +276,9 @@ async def plugin_add_cmd(client:aBot, message:Message):
 	if folder is None:
 		folder = plugin
 
+	if folder and (not re.match(r'^[a-zA-Z0-9_.-]+$', folder) or ".." in folder):
+		return await edit_or_reply(message, "<code>[!] → </code> Invalid directory name")
+
 	if user_input.startswith("http") or user_input.startswith("git@"):
 		link = user_input
 	else:
@@ -341,6 +344,8 @@ async def plugin_remove_cmd(client:aBot, message:Message):
 
 	if "/" in plugin: # If user passes <user>/<repo> here too, get just repo name
 		plugin = plugin.split("/")[1]
+	if not re.match(r'^[a-zA-Z0-9_.-]+$', plugin) or ".." in plugin:
+		return await edit_or_reply(message, "<code>[!] → </code> Invalid plugin name")
 	logger.info(f"Removing plugin \"{plugin}\"")
 
 	if remove_libraries:
